@@ -1,6 +1,6 @@
 const {User, Thought} = require('../models');
 
-const thoughtSchema = {
+const thoughtController = {
     getThoughts(req, res){
         Thought.find({})
         .then(dbThoughtData => res.json(dbThoughtData))
@@ -42,7 +42,7 @@ const thoughtSchema = {
 
     createReaction({body, params}, res){
         Thought.findOneAndUpdate(
-            {_id: params.id},
+            {_id: params.thoughtId},
             {$push: {reactions: body}},
             {new: true, runValidators: true}
         )
@@ -74,7 +74,7 @@ const thoughtSchema = {
 
     deleteThought({params}, res){
         Thought.findOneAndDelete(
-            {_id: params.thoughtId}
+            {_id: params.id}
         )
         .then(dbThoughtData => {
             if(!dbThoughtData){
@@ -100,7 +100,7 @@ const thoughtSchema = {
     deleteReaction({params}, res){
         Thought.findOneAndUpdate(
             {_id: params.thoughtId},
-            {$pull: {reactions: params.reactionId}},
+            {$pull: {reactions: {reactionId: params.reactionId}}},
             {new: true}
         )
         .then(dbThoughtData => {
@@ -114,4 +114,4 @@ const thoughtSchema = {
     }
 }
 
-module.exports = thoughtSchema;
+module.exports = thoughtController;
